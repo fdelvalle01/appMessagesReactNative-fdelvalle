@@ -40,3 +40,14 @@ export const Header = (props) => {
         </Appbar.Header>
         );
       };
+
+
+      export const HeaderPost = (props) => {
+        return (
+          <Appbar.Header>
+            <Appbar.Content title="Post" />
+              <Appbar.Action icon="magnify" onPress={() => console.log("hola")} />
+              <Appbar.Action icon="send" onPress={() => props.navigation.navigate("Chats")} />
+          </Appbar.Header>
+          );
+        };

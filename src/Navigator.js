@@ -6,10 +6,11 @@ import  Chat from "./screens/Chat/Chat";
 import  Chats from "./screens/Chats";
 import  Contacts from "./screens/Contacts/Contacts";
 import  Home from "./screens/Home/Home";
+import Share from "./screens/Share/Share";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "@emotion/native";
 import { Badge } from 'react-native-paper';
-import { View } from "react-native";
+import { View, Image } from "react-native";
 
 const ChatStackNavigator = createStackNavigator();
 const TabNavigator = createBottomTabNavigator();
@@ -41,11 +42,19 @@ export const Header = (props) => {
       return (
         <AppbarHeader>
         <Appbar.Content title="Contactos" />
-          <Appbar.Action icon="magnify" onPress={() => console.log("hola")} />
           <Appbar.Action icon="dots-vertical" onPress={() => console.log("hola")} />
         </AppbarHeader>
       );
     };
+
+  export const HeaderPost = (props) => {
+    return (
+      <AppbarHeader>
+        <Appbar.Content title="Publicar" />
+        <Appbar.Action icon="dots-vertical" onPress={() => console.log("hola")} />
+      </AppbarHeader>
+    );
+  };
   
     export const HeaderHome = (props) => {
       return (
@@ -96,6 +105,32 @@ export default function Navigator() {
             </ChatStackNavigator.Navigator>
           )}
         </TabNavigator.Screen>
+
+        {/* Tab De ingreso de publicaciones.  */}
+        <TabNavigator.Screen
+          name="loadPost"
+          options={{
+            tabBarLabel: "Post",
+            tabBarIcon: () => (
+              <Image
+                source={require('../assets/create.png')} // Cambiar la ruta por la de tu imagen
+              />
+            ),
+          }}
+        >
+          {(props) => (
+            <ChatStackNavigator.Navigator
+              screenOptions={{
+                headerStyle: { backgroundColor: "white" },
+                header: HeaderPost,
+              }}
+            >
+              <ChatStackNavigator.Screen name="Home" component={Share} />
+            </ChatStackNavigator.Navigator>
+          )}
+        </TabNavigator.Screen>
+
+
         <TabNavigator.Screen
           name="ChatTab"
           options={{
@@ -103,7 +138,7 @@ export default function Navigator() {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="message"
-                color={color}
+                color='black'
                 size={size}
               />
             ),
@@ -128,7 +163,7 @@ export default function Navigator() {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="contacts"
-                color={color}
+                color='black'
                 size={size}
               />
             ),
