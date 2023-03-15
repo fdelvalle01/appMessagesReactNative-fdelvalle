@@ -51,63 +51,16 @@ const onSubmit = handleSubmit((data) => {
     setAuth(data.phone);
 });
 
+const onSubmitRegister = handleSubmit((data) => {
+
+    // setAuth(data.phone);
+    console.log("hola");
+});
 
 
-  return (
-    <>
-        {/* <CenterBody>
-            <Controller
-                control={control}
-                name="Email"
-                rules={{required: 'Ingrese su Email'}}
-                render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                    <StyledView>
-                        <StyledTextInput
-                        label="Email"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        error={error}
-                />
-                <HelperText type="error" visible={Boolean(error)}>
-                    {error?.message}
-                </HelperText>
-            </StyledView> 
-            )}
-            ></Controller>
-            <Controller
-                control={control}
-                name="phone"
-                rules={{required: 'Ingrese su Telefono', pattern: {value: /^\d+$/, message: 'Ingrese solo numeros'}}}
-                render={({ field: { onChange, onBlur, value },  fieldState: { error } }) => (
-                <StyledView>
-                    <StyledTextInput
-                    label="Telefono"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    keyboardType="phone-pad"
-                    error={error}
-                    left={<TextInput.Affix name="phone" text='+56 9 '/>}
-                />
-                <HelperText type="error" visible={Boolean(error)}>
-                    {error?.message}
-                </HelperText>
-                </StyledView> 
-            )}
-            ></Controller>
-            <StyledButton disabled={!formState.isDirty} icon="login" mode="contained" onPress={onSubmit}>
-                Login 
-            </StyledButton>
-        </CenterBody> */}
-
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
- 
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <CenterBody>
+const ComponentLogin = () => {
+    return (
+            <CenterBody>
                 <View style={{justifyContent: 'center', alignItems: 'center', marginBottom:50}}>
                 <Image source={require('../../../assets/logo.png')} />
                 </View>
@@ -158,7 +111,52 @@ const onSubmit = handleSubmit((data) => {
                 <StyledButton disabled={!formState.isDirty} icon="login" mode="contained" onPress={onSubmit} style={{backgroundColor:'#33e3ff'}}>
                     Login 
                 </StyledButton>
+
+                <StyledButton  icon="arrow-right" mode="contained" onPress={onSubmitRegister} >
+                    Necesitas una cuenta? Registrate 
+                </StyledButton>
                 </CenterBody>
+                )
+            }
+
+const ComponentRegister = () => {
+    return (
+        <CenterBody>
+            <StyledTextInput
+                label="Email"
+                value={text}
+                onChangeText={text => setText(text)}
+                id="outlined-basic"
+                variant="outlined"
+            />
+            <StyledTextInput
+                label="Telefono"
+                value={text}
+                onChangeText={text => setText(text)}
+                id="outlined-basic"
+                variant="outlined"
+            />
+            <StyledButton icon="arrow-right" mode="contained" onPress={() => console.log('Pressed')}>
+                Registrate
+            </StyledButton>
+        </CenterBody>
+    )
+}
+
+  return (
+    <>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+        >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                {/* Esto debe ser parametrico. true mostrar una y false mostrar otra  */}
+                <ComponentLogin>
+
+                </ComponentLogin>
+                {/* <ComponentRegister>
+
+                </ComponentRegister> */}
             </View>
         </KeyboardAvoidingView>
     </>
