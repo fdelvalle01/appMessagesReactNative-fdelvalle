@@ -36,7 +36,6 @@ export function AuthProvider(props){
         });
     }, []);
 
-
     const persistedSetAuth = (text) => {
         setAuth(text);
         //Esto es una promesa, por lo que se puede usar el await. aun que no es necesario el await, ya que el setAuth es una función asincrónica

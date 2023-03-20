@@ -5,22 +5,23 @@ import  styled  from '@emotion/native';
 import { useAuth } from "../../hooks/useAuth";
 import { Controller, useForm } from 'react-hook-form';
 import { View, KeyboardAvoidingView, Platform, Image  } from 'react-native';
-
+import Register from './components/Register';
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { firestore, storage } from "../../services/firebase";
+import { Alert } from 'react-native';
 
 const CenterBody = styled(Body)`
     justify-content: center;
     align-items: center;
     padding: 0 20px;
     width: 100%;
-
 `;
-
 // padding: 0 0 0 0; => arriba derecha abajo izquierda
 const StyledTextInput = styled(TextInput)`
     width: 100%;
     margin-bottom: 10px;
     background-color: #fafafa;
-
+    height: 50px;
 `;
 
 const StyledButton = styled(Button)`
@@ -36,33 +37,41 @@ const PhoneNumber = () => {
 const [text, setText] = useState("");
 const { setAuth } = useAuth();
 
-const { register, 
-        setValue, 
-        handleSubmit, 
-        control,
-        formState,
-        errors } = useForm();
+const [isLogin, setIsLogin] = useState(true);
+
+const { register,   setValue,  handleSubmit,   control,  formState,    errors } = useForm();
 
 const counterRef = useRef(0);
 counterRef.current += 1;
 
+
+// metodo para verificar si el email existe en la base de datos de firebase, si existe se loguea y si no existe muestra un mensaje de error 
 const onSubmit = handleSubmit((data) => {
-
-    setAuth(data.phone);
+  
+    emailExists(data.Email).then((exists) => {
+        if (exists) {
+            setAuth(data.phone);
+        } else {
+            Alert.alert("Usuario inexistente");
+        }
+    }
+    );
 });
 
-const onSubmitRegister = handleSubmit((data) => {
+//metodo para verificar si el email existe en la base de datos de firebase 
+const emailExists = async (email) => {
+    const userRef = collection(firestore, "user");
+    const q = query(userRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
 
-    // setAuth(data.phone);
-    console.log("hola");
-});
-
+    return !querySnapshot.empty;
+};
 
 const ComponentLogin = () => {
     return (
             <CenterBody>
                 <View style={{justifyContent: 'center', alignItems: 'center', marginBottom:50}}>
-                <Image source={require('../../../assets/logo.png')} />
+                    <Image source={require('../../../assets/logo.png')} />
                 </View>
                 <Controller
                     control={control}
@@ -86,7 +95,29 @@ const ComponentLogin = () => {
                 </StyledView> 
                 )}
                 ></Controller>
-
+                  <Controller
+                    control={control}
+                    name="Contrasena"
+                    rules={{required: 'Ingrese su Contraseña'}}
+                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                        <StyledView>
+                            <StyledTextInput
+                                label="Contraseña"
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                error={error}
+                                id="outlined-basic"
+                                variant="outlined"
+                                secureTextEntry={true}
+                                
+                    />
+                    <HelperText type="error" visible={Boolean(error)}>
+                        {error?.message}
+                    </HelperText>
+                </StyledView> 
+                )}
+                ></Controller>
                 <Controller
                     control={control}
                     name="phone"
@@ -111,38 +142,12 @@ const ComponentLogin = () => {
                 <StyledButton disabled={!formState.isDirty} icon="login" mode="contained" onPress={onSubmit} style={{backgroundColor:'#33e3ff'}}>
                     Login 
                 </StyledButton>
-
-                <StyledButton  icon="arrow-right" mode="contained" onPress={onSubmitRegister} >
+                <StyledButton  icon="arrow-right" mode="contained" onPress={() => setIsLogin(false)} >
                     Necesitas una cuenta? Registrate 
                 </StyledButton>
                 </CenterBody>
                 )
             }
-
-const ComponentRegister = () => {
-    return (
-        <CenterBody>
-            <StyledTextInput
-                label="Email"
-                value={text}
-                onChangeText={text => setText(text)}
-                id="outlined-basic"
-                variant="outlined"
-            />
-            <StyledTextInput
-                label="Telefono"
-                value={text}
-                onChangeText={text => setText(text)}
-                id="outlined-basic"
-                variant="outlined"
-            />
-            <StyledButton icon="arrow-right" mode="contained" onPress={() => console.log('Pressed')}>
-                Registrate
-            </StyledButton>
-        </CenterBody>
-    )
-}
-
   return (
     <>
         <KeyboardAvoidingView
@@ -150,13 +155,9 @@ const ComponentRegister = () => {
             style={{ flex: 1 }}
         >
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                {/* Esto debe ser parametrico. true mostrar una y false mostrar otra  */}
-                <ComponentLogin>
-
-                </ComponentLogin>
-                {/* <ComponentRegister>
-
-                </ComponentRegister> */}
+                {
+                    isLogin ? <ComponentLogin></ComponentLogin> : <Register setIsLogin={setIsLogin}></Register>
+                }
             </View>
         </KeyboardAvoidingView>
     </>

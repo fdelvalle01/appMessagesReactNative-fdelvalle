@@ -7,8 +7,6 @@ const StyledCard = styled(Card)`
   margin: 10px;
 `;
 
-
-
 const Home = () => {
   return (
     // Debemos incorporar una imagen de fondo
