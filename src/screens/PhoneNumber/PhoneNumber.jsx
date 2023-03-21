@@ -44,28 +44,35 @@ const { register,   setValue,  handleSubmit,   control,  formState,    errors } 
 const counterRef = useRef(0);
 counterRef.current += 1;
 
-
-// metodo para verificar si el email existe en la base de datos de firebase, si existe se loguea y si no existe muestra un mensaje de error 
-const onSubmit = handleSubmit((data) => {
+/*
+Este código primero verifica si el email ingresado por el usuario existe en la base de datos
+de Firebase. Si existe, obtiene la contraseña almacenada en Firebase y 
+la compara con la contraseña ingresada por el usuario. Si las contraseñas coinciden,
+el usuario es autenticado, de lo contrario se muestra un mensaje de error. 
+Si el email no existe en Firebase, se muestra otro mensaje de error.
+*/
+const onSubmit = handleSubmit(async (data) => {
+    const { Email, Contrasena } = data;
   
-    emailExists(data.Email).then((exists) => {
-        if (exists) {
-            setAuth(data.phone);
-        } else {
-            Alert.alert("Usuario inexistente");
-        }
-    }
-    );
-});
-
-//metodo para verificar si el email existe en la base de datos de firebase 
-const emailExists = async (email) => {
+    // Verificar si el email existe en la base de datos de firebase
     const userRef = collection(firestore, "user");
-    const q = query(userRef, where("email", "==", email));
+    const q = query(userRef, where("email", "==", Email));
     const querySnapshot = await getDocs(q);
-
-    return !querySnapshot.empty;
-};
+  
+    if (!querySnapshot.empty) {
+      // Obtener la contraseña almacenada en Firebase
+      const user = querySnapshot.docs[0].data();
+      const { password } = user;
+      // Validar si la contraseña ingresada coincide con la contraseña almacenada en Firebase
+      if (password === Contrasena) {
+        setAuth(data.phone);
+      } else {
+        Alert.alert("Contraseña incorrecta");
+      }
+    } else {
+      Alert.alert("Usuario inexistente");
+    }
+  });
 
 const ComponentLogin = () => {
     return (
