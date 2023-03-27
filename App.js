@@ -25,7 +25,7 @@ Notifications.setNotificationHandler({
 
 function AuthApp() {
   const { auth, setAut, loading } = useAuth();
-  
+
   useEffect(() => {
     if (auth) registerForPushNotificationsAsync(auth);
   }, []);

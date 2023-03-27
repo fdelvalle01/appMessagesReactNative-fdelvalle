@@ -6,11 +6,20 @@ import  Chat from "./screens/Chat/Chat";
 import  Chats from "./screens/Chats";
 import  Contacts from "./screens/Contacts/Contacts";
 import  Home from "./screens/Home/Home";
-import Share from "./screens/Share/Share";
+// import Share from "./screens/Share/Share";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "@emotion/native";
 import { Badge } from 'react-native-paper';
 import { View, Image } from "react-native";
+import { List, Colors } from 'react-native-paper';
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
+import { useAuth } from "./hooks/useAuth";
+
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { firestore, storage } from "./services/firebase";
+import { addDoc, collection, doc, onSnapshot, orderBy, query, setDoc } from "firebase/firestore";
+import { useEffect } from "react";
 
 const ChatStackNavigator = createStackNavigator();
 const TabNavigator = createBottomTabNavigator();
@@ -75,6 +84,69 @@ export const Header = (props) => {
       };
 
 export default function Navigator() {
+//Metodo que abrira la camara para tomar una foto. 
+const [selectedImage, setSelectedImage] = useState(null);
+const { auth, idUser } = useAuth();
+
+async function uploadImage(uri, auth) {
+
+  const extension = uri.split(".").slice(-1)[0];
+  const path = "post/" + idUser + "/" + new Date().toISOString() + "." + extension;
+  const imageRef = ref(storage, path);
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+
+      reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", uri, true);
+    xhr.send(null);
+  });
+  await uploadBytes(imageRef, blob);
+
+  addDoc(collection(firestore, "post", idUser, "idUser"), {
+    content: path,
+    createdAt: new Date(),
+    phone: auth,
+    type: "image",
+  });
+}
+
+
+const pickImage = async () => {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!permission.granted) {
+    Alert.alert("Necesitamos los permisos");
+    return;
+  }
+
+  const media = await ImagePicker.launchImageLibraryAsync();
+  if (media.canceled) {
+    return;
+  }
+  setSelectedImage(media.assets[0]);
+  await uploadImage(media.assets[0].uri, auth);
+};
+
+const takePhoto = async () => {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) {
+    Alert.alert("Necesitamos los permisos");
+    return;
+  }
+
+  const media = await ImagePicker.launchCameraAsync();
+  if (media.canceled) {
+    return;
+  }
+  setSelectedImage(media.assets[0]);
+  await uploadImage(media.assets[0].uri, auth);
+};
+
   return (
     <NavigationContainer>
       <TabNavigator.Navigator screenOptions={{ headerShown: false }}>
@@ -105,31 +177,50 @@ export default function Navigator() {
             </ChatStackNavigator.Navigator>
           )}
         </TabNavigator.Screen>
-
-        {/* Tab De ingreso de publicaciones.  */}
         <TabNavigator.Screen
           name="loadPost"
           options={{
             tabBarLabel: "Post",
-            tabBarIcon: () => (
-              <Image
-                source={require('../assets/create.png')} // Cambiar la ruta por la de tu imagen
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="camera"
+                color={color}
+                size={size}
               />
             ),
           }}
         >
           {(props) => (
-            <ChatStackNavigator.Navigator
-              screenOptions={{
-                headerStyle: { backgroundColor: "white" },
-                header: HeaderPost,
-              }}
-            >
-              <ChatStackNavigator.Screen name="Home" component={Share} />
-            </ChatStackNavigator.Navigator>
+            <View>
+              <List.Section style={{marginTop:50, height:100 }}>
+                <List.Accordion title="Publicar"
+                  left={props => <List.Icon {...props} icon="camera" /> }
+                  >
+                  <List.Item 
+                    title="Toma una foto" 
+                    left={props => <List.Icon {...props} icon="camera" />} 
+                    onPress={() => {
+                      takePhoto();
+                    }}/>
+                  <List.Item 
+                  title="Selecciona una existente" 
+                  left={props => <List.Icon {...props} icon="attachment" />}
+                  onPress={() => {
+                      pickImage();
+                  }}/>
+                </List.Accordion>
+              </List.Section>
+              <ChatStackNavigator.Navigator
+                screenOptions={{
+                  headerStyle: { backgroundColor: "white" },
+                  header: HeaderPost,
+                }}
+              >
+                <ChatStackNavigator.Screen name="Home" component={Home} />
+              </ChatStackNavigator.Navigator>
+            </View>
           )}
         </TabNavigator.Screen>
-
 
         <TabNavigator.Screen
           name="ChatTab"
@@ -138,7 +229,7 @@ export default function Navigator() {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="message"
-                color='black'
+                color={color}
                 size={size}
               />
             ),
@@ -163,7 +254,7 @@ export default function Navigator() {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons
                 name="contacts"
-                color='black'
+                color={color}
                 size={size}
               />
             ),

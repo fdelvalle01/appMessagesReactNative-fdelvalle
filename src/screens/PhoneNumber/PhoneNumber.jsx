@@ -34,6 +34,12 @@ const StyledView = styled.View`
 `;
 
 const PhoneNumber = () => {
+    const objetForm = [{name: 'Email',text: 'Ingrese su Email',label: 'Email'},
+                        {name: 'Contrasena',text: 'Ingrese su Contraseña',label: 'Contraseña'},
+                        {name: 'phone',text: 'Ingrese su Telefono',label: 'Telefono'},
+                        ];
+
+
 const [text, setText] = useState("");
 const { setAuth } = useAuth();
 
@@ -65,7 +71,8 @@ const onSubmit = handleSubmit(async (data) => {
       const { password } = user;
       // Validar si la contraseña ingresada coincide con la contraseña almacenada en Firebase
       if (password === Contrasena) {
-        setAuth(data.phone);
+        // setAuth(data.phone);
+        setAuth(data.Email);
       } else {
         Alert.alert("Contraseña incorrecta");
       }
@@ -74,78 +81,41 @@ const onSubmit = handleSubmit(async (data) => {
     }
   });
 
+
 const ComponentLogin = () => {
     return (
             <CenterBody>
                 <View style={{justifyContent: 'center', alignItems: 'center', marginBottom:50}}>
                     <Image source={require('../../../assets/logo.png')} />
                 </View>
-                <Controller
-                    control={control}
-                    name="Email"
-                    rules={{required: 'Ingrese su Email'}}
-                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                        <StyledView>
-                            <StyledTextInput
-                                label="Email"
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                error={error}
-                                id="outlined-basic"
-                                variant="outlined"
-                                
-                    />
-                    <HelperText type="error" visible={Boolean(error)}>
-                        {error?.message}
-                    </HelperText>
-                </StyledView> 
-                )}
-                ></Controller>
-                  <Controller
-                    control={control}
-                    name="Contrasena"
-                    rules={{required: 'Ingrese su Contraseña'}}
-                    render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-                        <StyledView>
-                            <StyledTextInput
-                                label="Contraseña"
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                error={error}
-                                id="outlined-basic"
-                                variant="outlined"
-                                secureTextEntry={true}
-                                
-                    />
-                    <HelperText type="error" visible={Boolean(error)}>
-                        {error?.message}
-                    </HelperText>
-                </StyledView> 
-                )}
-                ></Controller>
-                <Controller
-                    control={control}
-                    name="phone"
-                    rules={{required: 'Ingrese su Telefono', pattern: {value: /^\d+$/, message: 'Ingrese solo numeros'}}}
-                    render={({ field: { onChange, onBlur, value },  fieldState: { error } }) => (
-                    <StyledView>
-                        <StyledTextInput
-                        label="Telefono"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        keyboardType="phone-pad"
-                        error={error}
-                        left={<TextInput.Affix name="phone" text='+56 9 '/>}
-                    />
-                    <HelperText type="error" visible={Boolean(error)}>
-                        {error?.message}
-                    </HelperText>
-                    </StyledView> 
-                )}
-                ></Controller>
+                {
+                    objetForm.map((item, index) => {
+                        return (
+                            <Controller key={index}
+                                control={control}
+                                name={item.name}
+                                rules={{required: item.text}}
+                                render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+                                    <StyledView>
+                                        <StyledTextInput
+                                            label={item.label}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            error={error}
+                                            id="outlined-basic"
+                                            variant="outlined"
+                                            secureTextEntry={item.name === 'Contrasena' ? true : false}
+                                />
+                                <HelperText type="error" visible={Boolean(error)}>
+                                    {error?.message}
+                                </HelperText>
+                            </StyledView> 
+                            )}
+                            ></Controller>
+                        )
+                    })
+                }
                 <StyledButton disabled={!formState.isDirty} icon="login" mode="contained" onPress={onSubmit} style={{backgroundColor:'#33e3ff'}}>
                     Login 
                 </StyledButton>

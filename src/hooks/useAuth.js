@@ -9,11 +9,12 @@ export function useAuth() {
   return data;
 }
 // llave de autenticación para el AsyncStorage 
-const AUTH_KEY = "phone";
+const AUTH_KEY = "email";
 
 export function AuthProvider(props){
     //Cuando ingresemos a la app, el usuario no estará autenticado por lo que el valor se inicia con su valor por defecto ""
     const [auth, setAuth] = useState("");
+    const [idUser, setIdUser] = useState("");
     const [loading, setLoading] = useState(true);
 
     /**
@@ -29,7 +30,8 @@ export function AuthProvider(props){
     useEffect(function loadFromAsyncStorage() {
         AsyncStorage.getItem(AUTH_KEY).then(async (value) => {
             if (value) {
-                setAuth(false);
+                setIdUser(value);
+                setAuth(true);
             }
             setLoading(false);
             SplashScreen.hideAsync();
@@ -37,16 +39,17 @@ export function AuthProvider(props){
     }, []);
 
     const persistedSetAuth = (text) => {
+        console.log("persistedSetAuth" + text);
         setAuth(text);
         //Esto es una promesa, por lo que se puede usar el await. aun que no es necesario el await, ya que el setAuth es una función asincrónica
         //el void es para que no se retorne nada y no se tenga que usar el await en el setAuth de arriba 
-        void AsyncStorage.setItem("phone", text);
+        void AsyncStorage.setItem("email", text);
     }
 
     return (
         <AuthContext.Provider
             {...props}
-            value={{auth, setAuth: persistedSetAuth, loading}}>
+            value={{auth, setAuth: persistedSetAuth, idUser,  loading}}>
         </AuthContext.Provider>
     )
 }

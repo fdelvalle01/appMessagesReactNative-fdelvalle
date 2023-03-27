@@ -40,6 +40,9 @@ const FlatList = styled.FlatList({
 
   const renderChatItem = (row) => {
     const { index, item } = row;
+
+    console.log(item.type)
+
     if (item.type === "image"){
       return <ChatImageItem {...item} />;
     }else{

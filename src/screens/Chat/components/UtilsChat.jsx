@@ -46,13 +46,15 @@ export const ChatImageItem = (props) => {
     const { auth } = useAuth();
     const [image, setImage] = useState(null);
     const { phone, id, content, createdAt } = props;
-    
+
     useEffect(
         function () {
         async function loadImageFromStorage() {
             const imageRef = ref(storage, content);
+            console.log(imageRef)
             const url = await getDownloadURL(imageRef);
             setImage(url);
+            console.log(url)
         }
         loadImageFromStorage();
         },
@@ -61,8 +63,8 @@ export const ChatImageItem = (props) => {
     
     return (
         <MessageContainer key={id} mine={phone === auth}>
-        {image ? <StyledImage source={{ uri: image }} /> : <ActivityIndicator />}
-        <StyledTimeText>{new Date(createdAt * 1000).toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}</StyledTimeText>
+          {image ? <StyledImage source={{ uri: image }} /> : <ActivityIndicator />}
+          <StyledTimeText>{new Date(createdAt * 1000).toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}</StyledTimeText>
         </MessageContainer>
     );
     };
