@@ -39,17 +39,24 @@ export function AuthProvider(props){
     }, []);
 
     const persistedSetAuth = (text) => {
-        console.log("persistedSetAuth" + text);
         setAuth(text);
+        setIdUser(text);
         //Esto es una promesa, por lo que se puede usar el await. aun que no es necesario el await, ya que el setAuth es una función asincrónica
         //el void es para que no se retorne nada y no se tenga que usar el await en el setAuth de arriba 
         void AsyncStorage.setItem("email", text);
     }
 
+    const signOut = () => {
+        setAuth(false);
+        setIdUser("");
+        AsyncStorage.removeItem(AUTH_KEY);
+    }
+
+
     return (
         <AuthContext.Provider
             {...props}
-            value={{auth, setAuth: persistedSetAuth, idUser,  loading}}>
+            value={{auth, setAuth: persistedSetAuth, idUser,  loading, signOut}}>
         </AuthContext.Provider>
     )
 }

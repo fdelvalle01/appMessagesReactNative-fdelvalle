@@ -19,14 +19,9 @@ const Home = () => {
   const [contents, setContents] = useState([]);
   //metodo que escucha los mensajes de la base de datos y los guarda en el estado messages
 
-
   useEffect(() => {
     async function listenToPost() {
-      const messagesRef = collection(
-        firestore,
-        "post",
-        idUser,
-        "idUser"
+      const messagesRef = collection(firestore,"post",idUser,"idUser"
       );
       const messagesQuery = query(
         messagesRef,
@@ -38,6 +33,7 @@ const Home = () => {
           ...doc.data(),
         }));
         setMessages(firestoreMessages);
+
       });
       return () => unsubscribe();
     }
