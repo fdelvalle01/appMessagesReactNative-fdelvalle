@@ -12,14 +12,31 @@ import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDA7v7JeFgTWbnXUnnZHYz3ETQAGsmi8nE",
+//   authDomain: "messageproject-2f65e.firebaseapp.com",
+//   projectId: "messageproject-2f65e",
+//   storageBucket: "messageproject-2f65e.appspot.com",
+//   messagingSenderId: "37129590004",
+//   appId: "1:37129590004:web:16f2f700f79914a2163aa1",
+//   measurementId: "G-NKW5E008RC"
+// };
 const firebaseConfig = {
-  apiKey: "AIzaSyDA7v7JeFgTWbnXUnnZHYz3ETQAGsmi8nE",
-  authDomain: "messageproject-2f65e.firebaseapp.com",
-  projectId: "messageproject-2f65e",
-  storageBucket: "messageproject-2f65e.appspot.com",
-  messagingSenderId: "37129590004",
-  appId: "1:37129590004:web:16f2f700f79914a2163aa1",
-  measurementId: "G-NKW5E008RC"
+
+  apiKey: "AIzaSyBXjBNj011v3a4_s2yERF5hLQJBN0zHlQ8",
+
+  authDomain: "messageprojecttest.firebaseapp.com",
+
+  projectId: "messageprojecttest",
+
+  storageBucket: "messageprojecttest.appspot.com",
+
+  messagingSenderId: "100700525890",
+
+  appId: "1:100700525890:web:59fcf65c7789c63323a4db",
+
+  measurementId: "G-NPV0BLX006"
+
 };
 
 // Initialize Firebase
